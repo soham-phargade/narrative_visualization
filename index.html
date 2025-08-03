@@ -18,12 +18,47 @@
 <body>
   <h1>Why Haaland is the Future GOAT</h1>
   <div>
-    <button onclick="renderScene(0)">Scene 1: Effectiveness</button>
-    <button onclick="renderScene(1)">Scene 2: Goals by Age</button>
+    <button onclick="renderScene(0)">0</button>
+    <button onclick="renderScene(1)">1</button>
+    <button onclick="renderScene(2)">2</button>
+    <button onclick="renderScene(3)">3</button>
+
+  <div id="sliderContainer" style="margin-left: 60px; margin-bottom: 10px; display: none;">
+    <label for="goalSlider">Haaland Projected Goals/Year: <span id="sliderValue">50</span></label>
+    <input type="range" id="goalSlider" min="30" max="70" value="50" />
+  </div>
+
   </div>
   <div id="container"></div>
 
   <script>
+    const manCityTopScorers = [
+    { Player: "Sergio Agüero", Goals: 260, GoalsPerGame: 0.67 },
+    { Player: "Eric Brook", Goals: 177, GoalsPerGame: 0.36 },
+    { Player: "Tommy Johnson", Goals: 166, GoalsPerGame: 0.47 },
+    { Player: "Colin Bell", Goals: 153, GoalsPerGame: 0.31 },
+    { Player: "Joe Hayes", Goals: 102, GoalsPerGame: 0.28 },
+    { Player: "Billy Meredith", Goals: 152, GoalsPerGame: 0.39 },
+    { Player: "Francis Lee", Goals: 148, GoalsPerGame: 0.45 },
+    { Player: "Tommy Browell", Goals: 139, GoalsPerGame: 0.56 },
+    { Player: "Fred Tilson", Goals: 132, GoalsPerGame: 0.48 },
+    { Player: "Erling Haaland", Goals: 108, GoalsPerGame: 0.94 }
+    ];
+
+    const topPLSingleSeason = [
+    { player: "Erling Haaland", season: "2022–23", club: "Manchester City", goals: 36 },
+    { player: "Alan Shearer", season: "1994–95", club: "Blackburn Rovers", goals: 34 },
+    { player: "Andy Cole", season: "1993–94", club: "Newcastle United", goals: 34 },
+    { player: "Mohamed Salah", season: "2017–18", club: "Liverpool", goals: 32 },
+    { player: "Luis Suárez", season: "2013–14", club: "Liverpool", goals: 31 },
+    { player: "Cristiano Ronaldo", season: "2007–08", club: "Manchester United", goals: 31 },
+    { player: "Alan Shearer", season: "1995–96", club: "Blackburn Rovers", goals: 31 },
+    { player: "Alan Shearer", season: "1993–94", club: "Blackburn Rovers", goals: 31 },
+    { player: "Harry Kane", season: "2022–23", club: "Tottenham Hotspur", goals: 30 },
+    { player: "Harry Kane", season: "2017–18", club: "Tottenham Hotspur", goals: 30 }
+    ];
+
+
     const gpgData = [
         { Player: "Erling Haaland", Goals: 300, Goals_Per_Game: 0.86 },
         { Player: "Lionel Messi", Goals: 879, Goals_Per_Game: 0.77 },
@@ -67,10 +102,11 @@
 
 
     function renderScene(sceneIndex) {
+    document.getElementById("sliderContainer").style.display = "none";
     d3.select("#container").html("");
-    const width = 700;
-    const height = 450;
-    const margin = { top: 40, right: 100, bottom: 50, left: 60 };
+    const width = 800;
+    const height = 500;
+    const margin = { top: 40, right: 100, bottom: 100, left: 60 };
 
     const svg = d3.select("#container")
       .append("svg")
@@ -78,6 +114,136 @@
       .attr("height", height);
 
     if (sceneIndex === 0) {
+        const x = d3.scaleBand()
+          .domain(topPLSingleSeason.map(d => d.player + " (" + d.season + ")"))
+          .range([margin.left, width - margin.right])
+          .padding(0.2);
+
+        const y = d3.scaleLinear()
+          .domain([0, d3.max(topPLSingleSeason, d => d.goals)])
+          .nice()
+          .range([height - margin.bottom, margin.top]);
+
+        svg.append("g")
+          .attr("transform", `translate(0,${height - margin.bottom})`)
+          .call(d3.axisBottom(x))
+          .selectAll("text")
+          .attr("transform", "rotate(-40)")
+          .attr("y", "10")
+          .style("text-anchor", "end");
+
+        svg.append("g")
+          .attr("transform", `translate(${margin.left},0)`)
+          .call(d3.axisLeft(y));
+
+        const tooltip = d3.select("body").append("div")
+          .attr("id", "tooltip")
+          .style("position", "absolute")
+          .style("background", "white")
+          .style("padding", "6px 10px")
+          .style("border", "1px solid gray")
+          .style("border-radius", "5px")
+          .style("pointer-events", "none")
+          .style("box-shadow", "0 2px 5px rgba(0,0,0,0.2)")
+          .style("opacity", 0);
+
+        svg.selectAll("rect")
+          .data(topPLSingleSeason)
+          .enter()
+          .append("rect")
+          .attr("x", d => x(d.player + " (" + d.season + ")"))
+          .attr("y", height - margin.bottom)
+          .attr("width", x.bandwidth())
+          .attr("height", 0)
+          .attr("fill", "steelblue")
+          .on("mousemove", function (event, d) {
+            tooltip.style("left", (event.pageX + 10) + "px")
+              .style("top", (event.pageY - 30) + "px")
+              .style("opacity", 1)
+              .html(`<strong>${d.player}</strong><br/>Season: ${d.season}<br/>Goals: ${d.goals}`);
+          })
+          .on("mouseout", function () {
+            tooltip.style("opacity", 0);
+          })
+          .transition()
+          .duration(1000)
+          .attr("y", d => y(d.goals))
+          .attr("height", d => height - margin.bottom - y(d.goals));
+      }
+
+    if (sceneIndex === 1) {
+    const x = d3.scaleLinear().domain([0, 300]).range([margin.left, width - margin.right]);
+    const y = d3.scaleLinear().domain([0, 1]).range([height - margin.bottom, margin.top]);
+
+    svg.append("g").attr("transform", `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x));
+    svg.append("g").attr("transform", `translate(${margin.left},0)`).call(d3.axisLeft(y));
+
+    svg.append("text").attr("x", width / 2).attr("y", height - 10).attr("text-anchor", "middle").text("Total Goals");
+    svg.append("text").attr("transform", "rotate(-90)").attr("x", -height / 2).attr("y", 15).attr("text-anchor", "middle").text("Goals");
+
+    svg.selectAll("circle")
+        .data(manCityTopScorers)
+        .enter()
+        .append("circle")
+        .attr("r", 0)
+        .attr("fill", "steelblue")
+        .attr("cx", d => x(d.Goals))
+        .attr("cy", d => y(d.GoalsPerGame))
+        .transition()
+        .duration(1000)
+        .attr("r", 6);
+
+    svg.selectAll("text.label")
+        .data(manCityTopScorers)
+        .enter()
+        .append("text")
+        .attr("class", "label")
+        .attr("x", d => x(d.Goals) + 8)
+        .attr("y", d => y(d.GoalsPerGame) + 4)
+        .text(d => d.Player);
+
+    // Tooltip div (one-time creation)
+    let tooltip = d3.select("body").select("#tooltip");
+    if (tooltip.empty()) {
+        tooltip = d3.select("body")
+        .append("div")
+        .attr("id", "tooltip")
+        .style("position", "absolute")
+        .style("background", "white")
+        .style("padding", "6px 10px")
+        .style("border", "1px solid gray")
+        .style("border-radius", "5px")
+        .style("pointer-events", "none")
+        .style("box-shadow", "0 2px 5px rgba(0,0,0,0.2)")
+        .style("opacity", 0);
+    }
+
+    // Voronoi logic (invisible but interactive)
+    const delaunay = d3.Delaunay.from(manCityTopScorers, d => x(d.Goals), d => y(d.GoalsPerGame));
+    const voronoi = delaunay.voronoi([margin.left, margin.top, width - margin.right, height - margin.bottom]);
+
+    svg.append("g")
+        .selectAll("path")
+        .data(manCityTopScorers)
+        .enter()
+        .append("path")
+        .attr("d", (_, i) => voronoi.renderCell(i))
+        .style("fill", "transparent")
+        .style("stroke", "none")
+        .on("mousemove", function (event, d) {
+        tooltip
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 30) + "px")
+            .style("opacity", 1)
+            .html(`<strong>${d.Player}</strong><br/>Goals: ${d.Goals}<br/>GPG: ${d.GoalsPerGame}`);
+        })
+        .on("mouseout", function () {
+        tooltip.style("opacity", 0);
+        });
+    }
+
+
+    if (sceneIndex === 2) {
     const x = d3.scaleLinear().domain([200, 1000]).range([margin.left, width - margin.right]);
     const y = d3.scaleLinear().domain([0.4, 0.9]).range([height - margin.bottom, margin.top]);
 
@@ -104,7 +270,7 @@
         .enter()
         .append("text")
         .attr("class", "label")
-        .attr("x", d => x(d.Goals) + 8)
+        .attr("x", d => x(d.Goals) + 8) 
         .attr("y", d => y(d.Goals_Per_Game) + 4)
         .text(d => d.Player);
 
@@ -149,42 +315,104 @@
     }
 
 
-    if (sceneIndex === 1) {
-      const players = ["messi", "ronaldo", "haaland"];
-      const colors = { messi: "red", ronaldo: "green", haaland: "blue" };
+    if (sceneIndex === 3) {
+  document.getElementById("sliderContainer").style.display = "block";
 
-      const x = d3.scaleLinear().domain([18, 42]).range([margin.left, width - margin.right]);
-      const y = d3.scaleLinear().domain([0, 1000]).range([height - margin.bottom, margin.top]);
+  const players = ["messi", "ronaldo", "haaland"];
+  const colors = { messi: "red", ronaldo: "green", haaland: "blue" };
 
-      svg.append("g").attr("transform", `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x).tickFormat(d3.format("d")));
-      svg.append("g").attr("transform", `translate(${margin.left},0)`).call(d3.axisLeft(y));
+  const x = d3.scaleLinear().domain([18, 42]).range([margin.left, width - margin.right]);
+  const y = d3.scaleLinear().domain([0, 1200]).range([height - margin.bottom, margin.top]);
 
-      svg.append("text").attr("x", width / 2).attr("y", height - 10).attr("text-anchor", "middle").text("Age");
-      svg.append("text").attr("transform", "rotate(-90)").attr("x", -height / 2).attr("y", 15).attr("text-anchor", "middle").text("Cumulative Goals");
+  svg.append("g").attr("transform", `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x).tickFormat(d3.format("d")));
+  svg.append("g").attr("transform", `translate(${margin.left},0)`).call(d3.axisLeft(y));
 
-      players.forEach(player => {
-        const line = d3.line()
-          .defined(d => d[player] !== undefined && d[player] !== null)
-          .x(d => x(d.age))
-          .y(d => y(d[player]));
+  svg.append("text").attr("x", width / 2).attr("y", height - 10).attr("text-anchor", "middle").text("Age");
+  svg.append("text").attr("transform", "rotate(-90)").attr("x", -height / 2).attr("y", 15).attr("text-anchor", "middle").text("Cumulative Goals");
 
-        svg.append("path")
-          .datum(ageData)
-          .attr("fill", "none")
-          .attr("stroke", colors[player])
-          .attr("stroke-width", 2)
-          .attr("d", line);
+  players.forEach(player => {
+    const line = d3.line()
+      .defined(d => d[player] !== undefined && d[player] !== null)
+      .x(d => x(d.age))
+      .y(d => y(d[player]));
 
-        const last = ageData.slice().reverse().find(d => d[player] !== undefined);
-        if (last) {
-          svg.append("text")
-            .attr("x", x(last.age) + 5)
-            .attr("y", y(last[player]))
-            .attr("fill", colors[player])
-            .text(player.charAt(0).toUpperCase() + player.slice(1));
-        }
-      });
+    const path = svg.append("path")
+      .datum(ageData)
+      .attr("fill", "none")
+      .attr("stroke", colors[player])
+      .attr("stroke-width", 2)
+      .attr("d", line);
+
+    const totalLength = path.node().getTotalLength();
+    path
+      .attr("stroke-dasharray", totalLength + " " + totalLength)
+      .attr("stroke-dashoffset", totalLength)
+      .transition()
+      .duration(2000)
+      .ease(d3.easeLinear)
+      .attr("stroke-dashoffset", 0);
+
+    const last = ageData.slice().reverse().find(d => d[player] !== undefined);
+    if (last) {
+      svg.append("text")
+        .attr("x", x(last.age) + 5)
+        .attr("y", y(last[player]))
+        .attr("fill", colors[player])
+        .text(player.charAt(0).toUpperCase() + player.slice(1));
     }
+  });
+
+  // --- Haaland Projected Line (dynamic) ---
+  const projectionGroup = svg.append("g");
+  const label = svg.append("text")
+    .attr("fill", "blue")
+    .attr("x", x(35) + 5);
+
+  function updateProjection(goalsPerYear) {
+    const base = 243;
+    const projectionData = [];
+    for (let i = 25; i <= 40; i++) {
+      projectionData.push({ age: i, goals: base + goalsPerYear * (i - 24) });
+    }
+
+    const line = d3.line()
+      .x(d => x(d.age))
+      .y(d => y(d.goals));
+
+    const path = projectionGroup.selectAll("path").data([projectionData]);
+
+    path.enter()
+      .append("path")
+      .attr("fill", "none")
+      .attr("stroke", "blue")
+      .attr("stroke-width", 2)
+      .attr("stroke-dasharray", "5 5")
+      .merge(path)
+      .transition()
+      .duration(600)
+      .attr("d", line);
+
+    label
+      .transition()
+      .duration(600)
+      .attr("y", y(projectionData.at(-1).goals))
+      .text(`Haaland Projected (${goalsPerYear} goals/year)`);
+  }
+
+  // initial draw
+  updateProjection(50);
+
+  // slider interaction
+  const slider = document.getElementById("goalSlider");
+  const valueLabel = document.getElementById("sliderValue");
+  slider.oninput = function () {
+    const val = +this.value;
+    valueLabel.textContent = val;
+    updateProjection(val);
+  };
+}
+
+
   }
 
   renderScene(0);
