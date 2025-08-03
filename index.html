@@ -2,21 +2,61 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Why Haaland is the Future GOAT</title>
+  <title>Is Haaland the Best Modern Goalscorer?</title>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://unpkg.com/d3-svg-annotation@2.5.1/d3-annotation.min.js"></script>
-  <style>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #fafafa;
+        margin: 0;
+        padding: 20px;
+        color: #111;
+    }
+
     svg {
-      font-family: sans-serif;
-      font-size: 12px;
+        font-family: 'Inter', sans-serif;
+        font-size: 13px;
     }
+
+    h1 {
+        font-weight: 600;
+        font-size: 28px;
+        margin-bottom: 10px;
+    }
+
     button {
-      margin: 10px;
+        background-color: #111;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        margin-right: 8px;
+        font-size: 14px;
+        border-radius: 4px;
+        cursor: pointer;
     }
-  </style>
+
+    button:hover {
+        background-color: #333;
+    }
+
+    #tooltip {
+        font-size: 13px;
+        font-family: 'Inter', sans-serif;
+    }
+
+    #sliderContainer {
+        margin-left: 60px;
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+    </style>
+
 </head>
 <body>
-  <h1>Why Haaland is the best modern goalscorer.</h1>
+  <h1>Is Haaland the Best Modern Goalscorer?</h1>
   <div>
     <button onclick="renderScene(4)">Start</button>
     <button onclick="renderScene(0)">0</button>
@@ -31,7 +71,11 @@
   </div>
 
   </div>
+  <div id="vizWrapper" style="display: flex; align-items: flex-start; gap: 24px;">
   <div id="container"></div>
+  <div id="textBox" style="max-width: 300px; font-size: 14px; line-height: 1.6em; font-family: 'Inter', sans-serif;"></div>
+</div>
+
 
   <script>
     let currentScene = 4;
@@ -106,11 +150,12 @@
 
 
     function renderScene(sceneIndex) {
+    document.getElementById("textBox").innerHTML = "";
     document.getElementById("sliderContainer").style.display = "none";
     d3.select("#container").html("");
     const width = 800;
     const height = 500;
-    const margin = { top: 40, right: 100, bottom: 120, left: 60 };
+    const margin = { top: 100, right: 100, bottom: 120, left: 60 };
 
     const svg = d3.select("#container")
       .append("svg")
@@ -119,7 +164,7 @@
       .attr("overflow", "visible");
     
 if (sceneIndex === 4) {
-  const title = "Is Erling Haaland Already Rewriting the Rulebook for Modern Strikers?";
+  const title = "Erling Haaland keeps raising the bar!";
   const paragraph = `At just 24, Erling Haaland is doing more than scoring goals. He is redefining what we expect from a number nine in the modern game. With a goalscoring rate that surpasses legends like Messi, Ronaldo, and Lewandowski at the same age, the Norwegian forward is operating on a different level. His 36-goal Premier League debut season was historic, but it is the consistency and efficiency of his output that makes him truly special. If he keeps up even a conservative version of this pace, Haaland is on track to surpass many of football's all-time greats. In a time when defenses are tighter and tactics more advanced, his dominance stands out as truly unprecedented. We may be witnessing the rise of the most prolific striker of this generation, and quite possibly the greatest modern goalscorer the sport will see.`;
 
   svg.append("foreignObject")
@@ -197,16 +242,13 @@ if (sceneIndex === 4) {
           
         svg.attr("overflow", "visible"); // allow content outside SVG bounds
 
-svg.append("foreignObject")
-  .attr("x", margin.left)
-  .attr("y", margin.top +480)
-  .attr("width", width - margin.left - margin.right)
-  .attr("height", 80)
-  .append("xhtml:div")
-  .style("font-family", "sans-serif")
-  .style("font-size", "14px")
-  .style("line-height", "1.5em")
-  .html(`<p>In his first season at Manchester City, Erling Haaland shattered the Premier League single-season scoring record with 36 goals. He became the fastest player to reach multiple goal milestones, instantly establishing himself as one of the most dominant forwards in history.</p>`);
+        document.getElementById("textBox").innerHTML = `<p>In his first season at Manchester City, Erling Haaland shattered the Premier League single-season scoring record with 36 goals. He became the fastest player to reach multiple goal milestones, instantly establishing himself as one of the most dominant forwards in history.</p>`;
+
+  svg
+  .style("background-color", "white")
+  .style("box-shadow", "0 2px 8px rgba(0,0,0,0.06)")
+  .style("border-radius", "8px")
+  .style("margin-bottom", "20px");
 
       }
 
@@ -290,8 +332,8 @@ const annotations = [
       label: "He's in a league of his own",
       wrap: 160
     },
-    x: x(haaland.Goals)-409.5,
-    y: y(haaland.Goals_Per_Game)-27.5,
+    x: x(haaland.Goals)-410,
+    y: y(haaland.Goals_Per_Game)-22,
     dx: 30,
     dy: -30,
     subject: { radius: 6, radiusPadding: 2 },
@@ -306,16 +348,13 @@ svg.append("g")
   .attr("class", "annotation-group")
   .call(makeAnnotations);
 
-svg.append("foreignObject")
-  .attr("x", margin.left)
-  .attr("y", margin.top +480)
-  .attr("width", width - margin.left - margin.right)
-  .attr("height", 80)
-  .append("xhtml:div")
-  .style("font-family", "sans-serif")
-  .style("font-size", "14px")
-  .style("line-height", "1.5em")
-  .html(`<p>Erling Haaland is already among Manchester City’s all-time top‑10 scorers, despite just a few seasons at the club. Having recorded 108 goals by the end of the 2024–25 season, he sits ninth on the overall list behind legends like Sergio Agüero.</p>`);
+document.getElementById("textBox").innerHTML = `<p>Erling Haaland is already among Manchester City’s all-time top‑10 scorers, despite just a few seasons at the club. Having recorded 108 goals by the end of the 2024–25 season, he sits ninth on the overall list behind legends like Sergio Agüero.</p>`;
+
+  svg
+  .style("background-color", "white")
+  .style("box-shadow", "0 2px 8px rgba(0,0,0,0.06)")
+  .style("border-radius", "8px")
+  .style("margin-bottom", "20px");
 
 
     }
@@ -418,16 +457,13 @@ svg.append("foreignObject")
     .attr("class", "annotation-group")
     .call(makeAnnotations);
 
-svg.append("foreignObject")
-  .attr("x", margin.left)
-  .attr("y", margin.top +480)
-  .attr("width", width - margin.left - margin.right)
-  .attr("height", 80)
-  .append("xhtml:div")
-  .style("font-family", "sans-serif")
-  .style("font-size", "14px")
-  .style("line-height", "1.5em")
-  .html(`<p>Erling Haaland stands out among modern prolific strikers with a superior goals-per-game ratio. While other prolific strikers took years to peak, Haaland has maintained a scoring rate above 0.85, putting him ahead in the conversation for goal-scoring greatness.</p>`);
+    document.getElementById("textBox").innerHTML = `<p>Erling Haaland stands out among modern prolific strikers with a superior goals-per-game ratio. While other prolific strikers took years to peak, Haaland has maintained a scoring rate above 0.85, putting him ahead in the conversation for goal-scoring greatness.</p>`;
+
+  svg
+  .style("background-color", "white")
+  .style("box-shadow", "0 2px 8px rgba(0,0,0,0.06)")
+  .style("border-radius", "8px")
+  .style("margin-bottom", "20px");
 
     }
 
@@ -448,6 +484,7 @@ svg.append("foreignObject")
   svg.append("text").attr("x", width / 2).attr("y", height - 40).attr("text-anchor", "middle").text("Haaland's goals by age compared to Messi and Ronaldo");
   svg.append("text").attr("transform", "rotate(-90)").attr("x", -height / 2).attr("y", 15).attr("text-anchor", "middle").text("Cumulative Goals");
 
+  
   players.forEach(player => {
     const line = d3.line()
       .defined(d => d[player] !== undefined && d[player] !== null)
@@ -478,16 +515,14 @@ svg.append("foreignObject")
         .attr("fill", colors[player])
         .text(player.charAt(0).toUpperCase() + player.slice(1));
     }
-    svg.append("foreignObject")
-  .attr("x", margin.left)
-  .attr("y", margin.top +480)
-  .attr("width", width - margin.left - margin.right)
-  .attr("height", 80)
-  .append("xhtml:div")
-  .style("font-family", "sans-serif")
-  .style("font-size", "14px")
-  .style("line-height", "1.5em")
-  .html(`<p>At 24, Haaland’s goals-per-game rate is higher than both Messi and Ronaldo at the same age. While they gradually built their legendary totals, Haaland exploded early. This pace gives him a real shot at surpassing them, but longevity and consistency over the next decade will be the true test.</p>`);
+
+    document.getElementById("textBox").innerHTML = `<p>At 24, Haaland’s goals-per-game rate is higher than both Messi and Ronaldo at the same age. While they gradually built their legendary totals, Haaland exploded early. This pace gives him a real shot at surpassing them, but longevity and consistency over the next decade will be the true test.</p>`;
+
+  svg
+  .style("background-color", "white")
+  .style("box-shadow", "0 2px 8px rgba(0,0,0,0.06)")
+  .style("border-radius", "8px")
+  .style("margin-bottom", "20px");
 
   });
 
