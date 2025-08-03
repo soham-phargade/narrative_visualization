@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Why Haaland is the Future GOAT</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  
+  <style>
+    svg {
+      font-family: sans-serif;
+      font-size: 12px;
+    }
+    button {
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Why Haaland is the Future GOAT</h1>
+  <div>
+    <button onclick="renderScene(0)">Scene 1: Effectiveness</button>
+    <button onclick="renderScene(1)">Scene 2: Goals by Age</button>
+  </div>
+  <div id="container"></div>
+
+  <script>
+    const gpgData = [
+        { Player: "Erling Haaland", Goals: 300, Goals_Per_Game: 0.86 },
+        { Player: "Lionel Messi", Goals: 879, Goals_Per_Game: 0.77 },
+        { Player: "Cristiano Ronaldo", Goals: 934, Goals_Per_Game: 0.74 },
+        { Player: "Robert Lewandowski", Goals: 709, Goals_Per_Game: 0.69 },
+        { Player: "Zlatan Ibrahimović", Goals: 573, Goals_Per_Game: 0.58 },
+        { Player: "Luis Suárez", Goals: 527, Goals_Per_Game: 0.61 },
+        { Player: "Karim Benzema", Goals: 486, Goals_Per_Game: 0.49 },
+        { Player: "Sergio Agüero", Goals: 420, Goals_Per_Game: 0.54 },
+        { Player: "Harry Kane", Goals: 438, Goals_Per_Game: 0.66 },
+        { Player: "Kylian Mbappé", Goals: 307, Goals_Per_Game: 0.76 }
+    ];
+
+
+    const ageData = [
+        { age: 18, messi: 1, ronaldo: 5, haaland: 16 },
+        { age: 19, messi: 11, ronaldo: 6, haaland: 43 },
+        { age: 20, messi: 30, ronaldo: 23, haaland: 82 },
+        { age: 21, messi: 51, ronaldo: 36, haaland: 125 },
+        { age: 22, messi: 92, ronaldo: 62, haaland: 162 },
+        { age: 23, messi: 140, ronaldo: 102, haaland: 200 },
+        { age: 24, messi: 197, ronaldo: 132, haaland: 243 },
+        { age: 25, messi: 279, ronaldo: 160, haaland: undefined },
+        { age: 26, messi: 348, ronaldo: 213, haaland: undefined },
+        { age: 27, messi: 394, ronaldo: 272, haaland: undefined },
+        { age: 28, messi: 458, ronaldo: 339, haaland: undefined },
+        { age: 29, messi: 508, ronaldo: 403, haaland: undefined },
+        { age: 30, messi: 565, ronaldo: 463, haaland: undefined },
+        { age: 31, messi: 616, ronaldo: 521, haaland: undefined },
+        { age: 32, messi: 671, ronaldo: 575, haaland: undefined },
+        { age: 33, messi: 699, ronaldo: 628, haaland: undefined },
+        { age: 34, messi: 745, ronaldo: 677, haaland: undefined },
+        { age: 35, messi: 769, ronaldo: 722, haaland: undefined },
+        { age: 36, messi: 807, ronaldo: 762, haaland: undefined },
+        { age: 37, messi: 837, ronaldo: 803, haaland: undefined },
+        { age: 38, messi: 866, ronaldo: 820, haaland: undefined },
+        { age: 39, messi: 874, ronaldo: 873, haaland: undefined },
+        { age: 40, messi: undefined, ronaldo: 923, haaland: undefined },
+        { age: 41, messi: undefined, ronaldo: 938, haaland: undefined }
+    ];
+
+
+    function renderScene(sceneIndex) {
+    d3.select("#container").html("");
+    const width = 700;
+    const height = 450;
+    const margin = { top: 40, right: 100, bottom: 50, left: 60 };
+
+    const svg = d3.select("#container")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height);
+
+    if (sceneIndex === 0) {
+    const x = d3.scaleLinear().domain([200, 1000]).range([margin.left, width - margin.right]);
+    const y = d3.scaleLinear().domain([0.4, 0.9]).range([height - margin.bottom, margin.top]);
+
+    svg.append("g").attr("transform", `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x));
+    svg.append("g").attr("transform", `translate(${margin.left},0)`).call(d3.axisLeft(y));
+
+    svg.append("text").attr("x", width / 2).attr("y", height - 10).attr("text-anchor", "middle").text("Total Goals");
+    svg.append("text").attr("transform", "rotate(-90)").attr("x", -height / 2).attr("y", 15).attr("text-anchor", "middle").text("Goals Per Game");
+
+    svg.selectAll("circle")
+        .data(gpgData)
+        .enter()
+        .append("circle")
+        .attr("r", 0)
+        .attr("fill", "steelblue")
+        .attr("cx", d => x(d.Goals))
+        .attr("cy", d => y(d.Goals_Per_Game))
+        .transition()
+        .duration(1000)
+        .attr("r", 6);
+
+    svg.selectAll("text.label")
+        .data(gpgData)
+        .enter()
+        .append("text")
+        .attr("class", "label")
+        .attr("x", d => x(d.Goals) + 8)
+        .attr("y", d => y(d.Goals_Per_Game) + 4)
+        .text(d => d.Player);
+
+    // Tooltip div (one-time creation)
+    let tooltip = d3.select("body").select("#tooltip");
+    if (tooltip.empty()) {
+        tooltip = d3.select("body")
+        .append("div")
+        .attr("id", "tooltip")
+        .style("position", "absolute")
+        .style("background", "white")
+        .style("padding", "6px 10px")
+        .style("border", "1px solid gray")
+        .style("border-radius", "5px")
+        .style("pointer-events", "none")
+        .style("box-shadow", "0 2px 5px rgba(0,0,0,0.2)")
+        .style("opacity", 0);
+    }
+
+    // Voronoi logic (invisible but interactive)
+    const delaunay = d3.Delaunay.from(gpgData, d => x(d.Goals), d => y(d.Goals_Per_Game));
+    const voronoi = delaunay.voronoi([margin.left, margin.top, width - margin.right, height - margin.bottom]);
+
+    svg.append("g")
+        .selectAll("path")
+        .data(gpgData)
+        .enter()
+        .append("path")
+        .attr("d", (_, i) => voronoi.renderCell(i))
+        .style("fill", "transparent")
+        .style("stroke", "none")
+        .on("mousemove", function (event, d) {
+        tooltip
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 30) + "px")
+            .style("opacity", 1)
+            .html(`<strong>${d.Player}</strong><br/>Goals: ${d.Goals}<br/>GPG: ${d.Goals_Per_Game}`);
+        })
+        .on("mouseout", function () {
+        tooltip.style("opacity", 0);
+        });
+    }
+
+
+    if (sceneIndex === 1) {
+      const players = ["messi", "ronaldo", "haaland"];
+      const colors = { messi: "red", ronaldo: "green", haaland: "blue" };
+
+      const x = d3.scaleLinear().domain([18, 42]).range([margin.left, width - margin.right]);
+      const y = d3.scaleLinear().domain([0, 1000]).range([height - margin.bottom, margin.top]);
+
+      svg.append("g").attr("transform", `translate(0,${height - margin.bottom})`).call(d3.axisBottom(x).tickFormat(d3.format("d")));
+      svg.append("g").attr("transform", `translate(${margin.left},0)`).call(d3.axisLeft(y));
+
+      svg.append("text").attr("x", width / 2).attr("y", height - 10).attr("text-anchor", "middle").text("Age");
+      svg.append("text").attr("transform", "rotate(-90)").attr("x", -height / 2).attr("y", 15).attr("text-anchor", "middle").text("Cumulative Goals");
+
+      players.forEach(player => {
+        const line = d3.line()
+          .defined(d => d[player] !== undefined && d[player] !== null)
+          .x(d => x(d.age))
+          .y(d => y(d[player]));
+
+        svg.append("path")
+          .datum(ageData)
+          .attr("fill", "none")
+          .attr("stroke", colors[player])
+          .attr("stroke-width", 2)
+          .attr("d", line);
+
+        const last = ageData.slice().reverse().find(d => d[player] !== undefined);
+        if (last) {
+          svg.append("text")
+            .attr("x", x(last.age) + 5)
+            .attr("y", y(last[player]))
+            .attr("fill", colors[player])
+            .text(player.charAt(0).toUpperCase() + player.slice(1));
+        }
+      });
+    }
+  }
+
+  renderScene(0);
+</script>
+
+</body>
+</html>
