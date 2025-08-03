@@ -58,11 +58,12 @@
 <body>
   <h1>Is Haaland the Best Modern Goalscorer?</h1>
   <div>
-    <button onclick="renderScene(4)">Start</button>
-    <button onclick="renderScene(0)">0</button>
+    <button onclick="prevScene()">Previous</button>
+    <!-- <button onclick="renderScene(4)">Start</button> -->
+    <!-- <button onclick="renderScene(0)">0</button>
     <button onclick="renderScene(1)">1</button>
     <button onclick="renderScene(2)">2</button>
-    <button onclick="renderScene(3)">3</button>
+    <button onclick="renderScene(3)">3</button> -->
     <button onclick="nextScene()">Next</button>
 
   <div id="sliderContainer" style="margin-left: 60px; margin-bottom: 10px; display: none;">
@@ -164,6 +165,7 @@
       .attr("overflow", "visible");
     
 if (sceneIndex === 4) {
+  let currentScene = 4;
   const title = "Erling Haaland keeps raising the bar!";
   const paragraph = `At just 24, Erling Haaland is doing more than scoring goals. He is redefining what we expect from a number nine in the modern game. With a goalscoring rate that surpasses legends like Messi, Ronaldo, and Lewandowski at the same age, the Norwegian forward is operating on a different level. His 36-goal Premier League debut season was historic, but it is the consistency and efficiency of his output that makes him truly special. If he keeps up even a conservative version of this pace, Haaland is on track to surpass many of football's all-time greats. In a time when defenses are tighter and tactics more advanced, his dominance stands out as truly unprecedented. We may be witnessing the rise of the most prolific striker of this generation, and quite possibly the greatest modern goalscorer the sport will see.`;
 
@@ -583,6 +585,11 @@ document.getElementById("textBox").innerHTML = `<p>Erling Haaland is already amo
 function nextScene() {
   currentScene = (currentScene + 1) % 5;  // Wraps back to 0 after 3
   renderScene(currentScene);
+}
+
+function prevScene() {
+    currentScene = (currentScene - 1 + 5) % 5;
+    renderScene(currentScene)
 }
 
   renderScene(4);
